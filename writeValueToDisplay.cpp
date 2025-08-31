@@ -1,11 +1,11 @@
 #pragma comment(lib, "nvapi64.lib")
+#pragma comment(lib, "user32.lib")
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
 #include <tchar.h>
 #include "nvapi.h"
-#include "targetver.h"
 
 
 BOOL WriteValueToMonitor(NvPhysicalGpuHandle hPhysicalGpu, NvU32 displayId, BYTE input_value, BYTE command_code, BYTE register_address);
@@ -75,6 +75,35 @@ int main(int argc, char* argv[]) {
         {
             printf("NvAPI_EnumNvidiaDisplayHandle() failed with status %d\n", nvapiStatus);
             return 1;
+        }
+    }
+
+    //
+    // Autodetect primary display if display_index is -1
+    //
+    if (display_index == -1)
+    {
+        // Alternative approach: Use Windows API to find primary display
+        DISPLAY_DEVICE dd;
+        ZeroMemory(&dd, sizeof(dd));
+        dd.cb = sizeof(dd);
+        
+        // Enumerate display devices to find the primary one
+        for (DWORD iDevNum = 0; EnumDisplayDevices(NULL, iDevNum, &dd, 0); iDevNum++)
+        {
+            if (dd.StateFlags & DISPLAY_DEVICE_PRIMARY_DEVICE)
+            {
+                printf("Primary display device found: %s\n", dd.DeviceName);
+                display_index = iDevNum;
+                printf("Using display index %d for primary display\n", display_index);
+                break;
+            }
+        }
+
+        if (display_index == -1)
+        {
+            printf("Primary display not found, defaulting to index 0\n");
+            display_index = 0;
         }
     }
 

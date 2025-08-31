@@ -9,7 +9,7 @@ Global writeIsRunning := false
     if (writeIsRunning)
         return
     writeIsRunning := true
-    RunWait, %ComSpec% /c .\writeValueToDisplay.exe 0 0xD0 0xF4 0x50, , Hide
+    RunWait, %ComSpec% /c .\writeValueToDisplay.exe -1 0xD0 0xF4 0x50, , Hide
     writeIsRunning := false
 return
 
@@ -17,6 +17,6 @@ return
     if (writeIsRunning)
         return
     writeIsRunning := true
-    RunWait, %ComSpec% /c .\writeValueToDisplay.exe 0 0x90 0xF4 0x50, , Hide
+    RunWait, %ComSpec% /c .\writeValueToDisplay.exe -1 0x90 0xF4 0x50, , Hide
     writeIsRunning := false
 return
