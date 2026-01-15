@@ -20,3 +20,11 @@ return
     RunWait, %ComSpec% /c .\writeValueToDisplay.exe -1 0x90 0xF4 0x50, , Hide
     writeIsRunning := false
 return
+
+^!k::  ; Ctrl + Alt + K for HDMI-2
+    if (writeIsRunning)
+        return
+    writeIsRunning := true
+    RunWait, %ComSpec% /c .\writeValueToDisplay.exe -1 0x91 0xF4 0x50, , Hide
+    writeIsRunning := false
+return
