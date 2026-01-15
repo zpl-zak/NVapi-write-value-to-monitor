@@ -1,6 +1,10 @@
 # NVapi-write-value-to-monitor
-Send commands to monitor over i2c using NVapi. <br>
-This can be used to issue VCP commands or other manufacturer specific commands
+Send commands to monitor over i2c. <br>
+This can be used to issue VCP commands or other manufacturer specific commands.
+
+**Platform Support:**
+- **Windows**: Uses NVIDIA API (NVAPI)
+- **Linux**: Uses ddcutil (works with any GPU)
 
 
 This program relies on the NVIDIA API (NVAPI), to compile it you will need to download the api which can be found here: <br> https://developer.nvidia.com/rtx/path-tracing/nvapi/get-started
@@ -49,4 +53,72 @@ writeValueToDisplay.exe 0 0x90 0xF4 0x50
 NOTE: LG Ultragear 27GP850-B is display 0 for me
 ```
 writeValueToDisplay.exe 0 0xD0 0xF4 0x50
+```
+
+---
+
+## Linux Version
+
+The Linux version uses [ddcutil](https://www.ddcutil.com/) as the backend and works with any GPU (NVIDIA, AMD, Intel).
+
+### Dependencies
+
+```bash
+# Debian/Ubuntu
+sudo apt install ddcutil i2c-tools
+
+# Fedora
+sudo dnf install ddcutil i2c-tools
+
+# Arch
+sudo pacman -S ddcutil i2c-tools
+```
+
+### User Permissions
+
+You must be in the `i2c` group to access the I2C bus:
+
+```bash
+sudo usermod -aG i2c $USER
+```
+
+Log out and back in for the group change to take effect.
+
+### Building
+
+```bash
+cd linux
+make
+```
+
+### Usage
+
+The Linux version has the same CLI syntax as Windows:
+
+```bash
+./writeValueToDisplay <display_index> <input_value> <command_code> [register_address]
+```
+
+Use `-1` for `display_index` to auto-detect the primary display.
+
+### Linux Examples
+
+Change display 0 brightness to 50%:
+```bash
+./writeValueToDisplay 0 0x32 0x10
+```
+
+Change input to HDMI 1 on LG Ultragear:
+```bash
+./writeValueToDisplay 0 0x90 0xF4 0x50
+```
+
+Change input to DisplayPort on LG Ultragear:
+```bash
+./writeValueToDisplay 0 0xD0 0xF4 0x50
+```
+
+Auto-detect primary display:
+```bash
+./writeValueToDisplay -1 0xD0 0xF4 0x50
 ```
